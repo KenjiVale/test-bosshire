@@ -16,6 +16,15 @@ interface FakeStoreProduct {
   };
 }
 
+interface RequestProduct {
+  id: string;
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+  quantity: number;
+}
+
 interface FakeStoreCartItem {
   productId: number;
   quantity: number;
@@ -111,31 +120,46 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { items, userId = 1 } = body;
+    const { items, userId = 1, products } = body;
 
-    if (!items || !Array.isArray(items)) {
+    // Handle both formats
+    let cartItems = items;
+    if (!cartItems && products) {
+      cartItems = products.map((product: RequestProduct) => ({
+        productId: parseInt(product.id || "0"),
+        quantity: product.quantity || 1,
+      }));
+    }
+
+    if (!cartItems || !Array.isArray(cartItems)) {
       return NextResponse.json(
         { error: "Invalid request: items array is required" },
         { status: 400 }
       );
     }
 
-    // Transform the items array to the format expected by FakeStoreAPI
-    const fakeStoreProducts = items.map((item) => ({
-      productId: parseInt(item.productId || item.product?.id || "0"),
+    // Transform to FakeStoreAPI format
+    const fakeStoreProducts = cartItems.map((item) => ({
+      productId: parseInt(item.productId || item.id || "0"),
       quantity: item.quantity || 1,
     }));
+
+    // Prepare the request body exactly as FakeStoreAPI expects
+    const fakeStoreBody = {
+      userId: parseInt(userId.toString()),
+      date: new Date().toISOString(),
+      products: fakeStoreProducts.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      })),
+    };
 
     const response = await fetch(`${FAKE_STORE_API_URL}/carts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        userId,
-        date: new Date().toISOString(),
-        products: fakeStoreProducts,
-      }),
+      body: JSON.stringify(fakeStoreBody),
     });
 
     if (!response.ok) {
@@ -148,7 +172,7 @@ export async function POST(request: NextRequest) {
     const newCart = (await response.json()) as FakeStoreCart;
 
     // Map the items from your request format to the response format
-    const cartItems = items.map((item, index) => {
+    const formattedCartItems = cartItems.map((item, index) => {
       return {
         id: `ci-${newCart.id}-${index}`,
         productId: item.productId || item.product?.id,
@@ -164,14 +188,14 @@ export async function POST(request: NextRequest) {
     });
 
     // Calculate total amount
-    const totalAmount = cartItems.reduce(
+    const totalAmount = formattedCartItems.reduce(
       (total, item) => total + item.product.price * item.quantity,
       0
     );
 
     const formattedCart = {
       id: newCart.id.toString(),
-      items: cartItems,
+      items: formattedCartItems,
       createdAt: newCart.date,
       totalAmount,
     };

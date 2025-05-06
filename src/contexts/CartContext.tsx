@@ -7,15 +7,16 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { Cart, Product } from "../types";
+import { Cart, Product } from "../app/cart/types";
 import { useNotification } from "./NotificationContext";
 import {
   fetchCarts as apiFetchCarts,
   createCart as apiCreateCart,
   updateCart as apiUpdateCart,
-  deleteCartById as apiDeleteCart,
+  deleteCart as apiDeleteCart,
+  fetchProducts,
 } from "../app/cart/api";
-import { fetchCartById, fetchProducts } from "../utils/api";
+import { fetchCartById } from "../app/cart/api/cartApi";
 
 interface CartContextType {
   carts: Cart[];

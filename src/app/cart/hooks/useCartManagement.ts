@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { useNotification } from "../../../contexts/NotificationContext";
 import { Cart, Product } from "../../../types";
-import { fetchCarts, createCart, updateCart, deleteCartById } from "../api";
+import {
+  fetchCarts,
+  createCart,
+  updateCart,
+  deleteCart as apiDeleteCart,
+} from "../api";
 
 export const useCartManagement = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
@@ -77,7 +82,7 @@ export const useCartManagement = () => {
   const deleteCart = async (cartId: string) => {
     try {
       setIsLoading(true);
-      await deleteCartById(cartId);
+      await apiDeleteCart(cartId);
       showNotification("Cart deleted successfully", "success");
 
       // Update local state by removing the deleted cart

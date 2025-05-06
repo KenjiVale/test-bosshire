@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLogin as useAuthLogin } from "../../auth/hooks";
+import { useLogin as useAuthLogin } from "./useLogin";
 
 export const useLoginFormState = () => {
   const [showPassword, setShowPassword] = useState(false);

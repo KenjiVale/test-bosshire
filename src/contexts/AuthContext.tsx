@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { User, LoginCredentials } from "../types";
-import { loginApi } from "../features/auth/api";
+import { login } from "../app/login/api";
 
 interface AuthContextType {
   user: User | null;
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   // Login function that uses the API
-  const login = async (credentials: LoginCredentials) => {
+  const handleLogin = async (credentials: LoginCredentials) => {
     // Validate credentials
     if (!credentials.username) {
       throw new Error("Username is required");
@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setIsLoading(true);
       // Call the API
-      const data = await loginApi(credentials);
+      const data = await login(credentials);
 
       // Save user data
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated, isLoading }}
+      value={{ user, login: handleLogin, logout, isAuthenticated, isLoading }}
     >
       {children}
     </AuthContext.Provider>

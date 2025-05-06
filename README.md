@@ -109,13 +109,12 @@ A modern E-Commerce admin dashboard built with Next.js, Material-UI, and TypeScr
 
 ## API Endpoints
 
-- `POST /api/auth`: Authentication endpoint
+- `POST /api/auth/login`: Authentication endpoint
 - Cart endpoints:
   - `GET /api/carts`: Fetch all carts
   - `POST /api/carts`: Create a new cart
   - `PUT /api/carts/:id`: Update cart
   - `DELETE /api/carts/:id`: Delete cart
-- `GET /api/products`: Fetch available products
 
 ## State Management
 

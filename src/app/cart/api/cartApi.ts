@@ -1,60 +1,129 @@
 "use client";
 
-import { Cart, Product } from "../../../types";
+import { Cart, Product } from "../types";
 
-export const fetchCarts = async (): Promise<Cart[]> => {
-  const response = await fetch("/api/carts");
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch carts");
+// Function to fetch all carts
+export async function fetchCarts(): Promise<Cart[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/carts`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch carts: ${response.statusText}`);
+    }
+
+    const carts: Cart[] = await response.json();
+    return carts;
+  } catch (error) {
+    throw error;
   }
+}
 
-  return await response.json();
-};
+// Function to fetch a single cart by ID
+export async function fetchCartById(cartId: string): Promise<Cart> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/carts/${cartId}`);
 
-export const createCart = async (
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cart: ${response.statusText}`);
+    }
+
+    const cart: Cart = await response.json();
+    return cart;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Function to create a new cart
+export async function createCart(
   items: { productId: string; product: Product; quantity: number }[]
-): Promise<Cart> => {
-  const response = await fetch("/api/carts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ items }),
-  });
+): Promise<Cart> {
+  try {
+    // Format the items to match the expected API payload
+    const products = items.map((item) => ({
+      id: item.productId,
+      title: item.product.name,
+      price: item.product.price,
+      description: item.product.description,
+      image: item.product.image || "",
+      quantity: item.quantity,
+    }));
 
-  if (!response.ok) {
-    throw new Error("Failed to create cart");
+    const response = await fetch(`${API_BASE_URL}/carts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: 1,
+        products,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create cart: ${response.statusText}`);
+    }
+
+    const newCart: Cart = await response.json();
+    return newCart;
+  } catch (error) {
+    throw error;
   }
+}
 
-  return await response.json();
-};
-
-export const updateCart = async (
+// Function to update a cart
+export async function updateCart(
   cartId: string,
   items: { productId: string; product: Product; quantity: number }[]
-): Promise<Cart> => {
-  const response = await fetch(`/api/carts/${cartId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ items }),
-  });
+): Promise<Cart> {
+  try {
+    // Format the items to match the expected API payload
+    const products = items.map((item) => ({
+      id: item.productId,
+      title: item.product.name,
+      price: item.product.price,
+      description: item.product.description,
+      image: item.product.image || "",
+      quantity: item.quantity,
+    }));
 
-  if (!response.ok) {
-    throw new Error(`Failed to update cart ${cartId}`);
+    const response = await fetch(`${API_BASE_URL}/carts/${cartId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: 1,
+        products,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update cart: ${response.statusText}`);
+    }
+
+    const updatedCart: Cart = await response.json();
+    return updatedCart;
+  } catch (error) {
+    throw error;
   }
+}
 
-  return await response.json();
-};
+// Function to delete a cart
+export async function deleteCart(cartId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/carts/${cartId}`, {
+      method: "DELETE",
+    });
 
-export const deleteCartById = async (cartId: string): Promise<void> => {
-  const response = await fetch(`/api/carts/${cartId}`, {
-    method: "DELETE",
-  });
+    if (!response.ok) {
+      throw new Error(`Failed to delete cart: ${response.statusText}`);
+    }
 
-  if (!response.ok) {
-    throw new Error(`Failed to delete cart ${cartId}`);
+    return true;
+  } catch (error) {
+    throw error;
   }
-};
+}

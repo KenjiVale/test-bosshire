@@ -3,18 +3,25 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { LoginCredentials } from "../../../types";
 
-const loginSchema = yup.object().shape({
-  username: yup.string().required("Username is required").min(8),
-  password: yup.string().required("Password is required").min(8),
-});
+// Form validation schema
+const loginSchema = yup
+  .object({
+    username: yup.string().required("Username is required"),
+    password: yup
+      .string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters"),
+  })
+  .required();
 
 export const useLoginForm = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginCredentials>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
       username: "",
