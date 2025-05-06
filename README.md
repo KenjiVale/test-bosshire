@@ -1,7 +1,4 @@
-# Credentials
 
-- Username: `admin123`
-- Password: `12345678`
 
 # E-Commerce Admin Dashboard
 
