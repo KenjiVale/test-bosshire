@@ -1,5 +1,3 @@
-
-
 # E-Commerce Admin Dashboard
 
 A modern E-Commerce admin dashboard built with Next.js, Material-UI, and TypeScript. This application follows a modular architecture with clear separation of concerns, allowing admin users to manage carts and products efficiently.
@@ -46,13 +44,23 @@ A modern E-Commerce admin dashboard built with Next.js, Material-UI, and TypeScr
    # or
    yarn install
    ```
-3. Run the development server
+3. Set up environment variables
+
+   ```bash
+   # Extract required environment variables
+   yarn extract-env
+
+   # Or manually create .env file with:
+   NEXT_PUBLIC_FAKE_STORE_API_URL=https://fakestoreapi.com
+   ```
+
+4. Run the development server
    ```bash
    npm run dev
    # or
    yarn dev
    ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Project Structure
 

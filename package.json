@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "extract-env": "echo \"NEXT_PUBLIC_FAKE_STORE_API_URL=https://fakestoreapi.com\" > .env && echo \"Environment variables extracted to .env file\""
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
